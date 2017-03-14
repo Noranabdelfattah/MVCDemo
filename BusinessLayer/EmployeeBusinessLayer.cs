@@ -28,7 +28,7 @@ namespace BusinessLayer
                     while (rdr.Read())                                                                //7- while loop to fill an obj of type employee with the row data
                     {
                         Employee emp = new Employee();
-                        emp.EmployeeId = rdr["EmployeeId"].ToString();
+                        emp.EmployeeId = Convert.ToInt32(rdr["EmployeeId"]);
                         emp.DepartementId = Convert.ToInt32(rdr["DepartementId"]);
                         emp.Name = rdr["Name"].ToString();
                         emp.Gender = rdr["Gender"].ToString();
@@ -81,5 +81,52 @@ namespace BusinessLayer
 
             }
         }
+
+        public void SaveEmployee(Employee emp) {
+
+
+
+            string connectionstring = ConfigurationManager.ConnectionStrings["DBSC"].ConnectionString;  //1- define the conn string to the DB
+
+            using (SqlConnection con = new SqlConnection(connectionstring))
+            {                         //3- Define a SqL connection to the DB
+
+                SqlCommand cmd = new SqlCommand("spSaveEmployee", con);                            //4-Define SQL Commend to exec the sp
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                SqlParameter paramId = new SqlParameter();
+                paramId.ParameterName = "@Id";
+                paramId.Value = emp.EmployeeId;
+                cmd.Parameters.Add(paramId);
+
+                SqlParameter paramName = new SqlParameter();
+                paramName.ParameterName = "@Name";
+                paramName.Value = emp.Name;
+                cmd.Parameters.Add(paramName);
+
+                SqlParameter paramGender = new SqlParameter();
+                paramGender.ParameterName = "@Gender";
+                paramGender.Value = emp.Gender;
+                cmd.Parameters.Add(paramGender);
+
+                SqlParameter paramCity = new SqlParameter();
+                paramCity.ParameterName = "@City";
+                paramCity.Value = emp.City;
+                cmd.Parameters.Add(paramCity);
+
+                SqlParameter paramDepId = new SqlParameter();
+                paramDepId.ParameterName = "@DepartementId";
+                paramDepId.Value = emp.DepartementId;
+                cmd.Parameters.Add(paramDepId);
+
+                con.Open();
+                cmd.ExecuteNonQuery();
+
+            }
+
+
+        }
+
+
     }
 }

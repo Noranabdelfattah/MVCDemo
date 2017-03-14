@@ -101,9 +101,41 @@ namespace MVCDemo.Controllers
         }
 
 
+        [HttpGet]
+
+        public ActionResult Edit(int id)
+        {
+            EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
+            Employee employee = empBusinessLayer.Employees.Single(emp=>emp.EmployeeId==id);
+            return View(employee);
+        }
+
+        [HttpPost]
+
+        public ActionResult Edit()
+        {
+            if (ModelState.IsValid)
+            {
+                Employee employee = new Employee();
+                UpdateModel(employee);
+                EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
+                empBusinessLayer.SaveEmployee(employee);
+
+                return RedirectToAction("Index");
+            }
+
+            return View();
+        }
 
 
+        [HttpGet]
 
+        public ActionResult Details(int id)
+        {
+            EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
+            Employee employee = empBusinessLayer.Employees.Single(emp => emp.EmployeeId == id);
+            return View(employee);
+        }
 
 
 

@@ -11,7 +11,7 @@ namespace BusinessLayer
     public class Employee
     {
     
-        public string EmployeeId { set; get; }
+        public int EmployeeId { set; get; }
         public string Name { set; get; }
         public string Gender { set; get; }
         public string City { set; get; }
