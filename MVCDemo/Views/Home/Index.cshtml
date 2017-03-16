@@ -1,0 +1,16 @@
+﻿@model BusinessLayer.Departments
+
+@{
+    ViewBag.Title = "Index";
+}
+<div style="align-content:center ; font-family:Arial ; font-size:24px ; ">
+   
+     <h2>Welcome to Noran's Company Home Page</h2>
+
+    @Html.ActionLink("View Employees" , "Index","Employee",new { @DepartmentId=0},null)
+
+    <br />
+
+    @Html.ActionLink("View Departments", "Index","Department")
+
+</div>

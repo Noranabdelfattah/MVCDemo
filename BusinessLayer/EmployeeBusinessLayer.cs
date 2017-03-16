@@ -17,8 +17,8 @@ namespace BusinessLayer
                 string connectionstring = ConfigurationManager.ConnectionStrings["DBSC"].ConnectionString;  //1- define the conn string to the DB
                 List<Employee> employees = new List<Employee>();                                           //2- create al list to be populated with the DB rows  
 
-                using (SqlConnection con = new SqlConnection(connectionstring))
-                {                         //3- Define a SqL connection to the DB
+                using (SqlConnection con = new SqlConnection(connectionstring))                           //3- Define a SqL connection to the DB
+                {
 
                     SqlCommand cmd = new SqlCommand("spGetAllEmployees", con);                            //4-Define SQL Commend to exec the sp
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -34,11 +34,8 @@ namespace BusinessLayer
                         emp.Gender = rdr["Gender"].ToString();
                         emp.City = rdr["City"].ToString();
 
-
                         employees.Add(emp);                                                         //8- Add the obj to the List 
                     }
-
-
                 }
                 return employees;
             }
@@ -82,9 +79,8 @@ namespace BusinessLayer
             }
         }
 
-        public void SaveEmployee(Employee emp) {
-
-
+        public void SaveEmployee(Employee emp)
+        {
 
             string connectionstring = ConfigurationManager.ConnectionStrings["DBSC"].ConnectionString;  //1- define the conn string to the DB
 
@@ -127,6 +123,26 @@ namespace BusinessLayer
 
         }
 
+        public void DeleteEmployee(int ID)
+        {
 
+            string connectionstring = ConfigurationManager.ConnectionStrings["DBSC"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(connectionstring))
+            {
+
+                SqlCommand cmd = new SqlCommand("spDeleteEmployee", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                SqlParameter paramID = new SqlParameter();
+                paramID.ParameterName = "@ID";
+                paramID.Value = ID;
+                cmd.Parameters.Add(paramID);
+
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+        }
     }
 }

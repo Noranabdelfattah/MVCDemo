@@ -28,26 +28,40 @@
         </th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Gender)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.City)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DepartementId)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.EmployeeId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.EmployeeId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.EmployeeId })
-        </td>
-    </tr>
-}
+    @foreach (var item in @Model)
+    {
+        using (@Html.BeginForm("Delete", "Employee", new { id = item.EmployeeId }))
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DepartementId)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.EmployeeId }) |
+
+
+                    <input type="submit" value="Delete" 
+                           onclick="return confirm('Are you sure you want to Delete this item ( @item.Name )')"/>
+
+                </td>
+            </tr>
+        }
+    }
 
 </table>
+<br /> <br />
+
+@Html.ActionLink("Back To Departments", "Index", "Department")
+
+<br /> <br />
+
+@Html.ActionLink("Back To HomePage", "Index", "Home")

@@ -9,12 +9,21 @@ namespace MVCDemo.Controllers
     public class EmployeeController : Controller
     {
         // GET: Employee
-        public ActionResult Index()
+        public ActionResult Index(int DepartmentId)
         {
             EmployeeBusinessLayer employeebusinesslayer = new EmployeeBusinessLayer();
-            List<Employee> employees = employeebusinesslayer.Employees.ToList();
+            if (DepartmentId == 0)
+            {
+                List<Employee> employees = employeebusinesslayer.Employees.ToList();
 
-            return View(employees);
+                return View(employees);
+            }
+
+            else
+            {
+                List<Employee> employees = employeebusinesslayer.Employees.Where(emp => emp.DepartementId == DepartmentId).ToList();
+                return View(employees);
+            }
         }
 
         [HttpGet]
@@ -63,12 +72,36 @@ namespace MVCDemo.Controllers
 
         //    return RedirectToAction("Index");
         //}
-   
-            //[HttpPost]
 
-        //public ActionResult Create(Employee employee) {
+        [HttpPost]
+
+        public ActionResult Create(Employee employee)  //
+        {
+            if (ModelState.IsValid)
+            {
+                EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
+                empBusinessLayer.AddEmployee(employee);
+
+                return RedirectToAction("Index", new { @DepartmentId = 0 });
+            }
+
+            return View();
+        }
+
+        ///<summary>
+        ///
+        /// using updateModel Method
+        /// </summary>
+        /// 
+        //[HttpPost]
+        //[ActionName("Create")]                                               //btdy exception f el validation
+        //public ActionResult Create_Post()
+        //{
         //    if (ModelState.IsValid)
         //    {
+        //        Employee employee = new Employee();
+        //        UpdateModel(employee);
+
         //        EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
         //        empBusinessLayer.AddEmployee(employee);
 
@@ -78,55 +111,78 @@ namespace MVCDemo.Controllers
         //    return View();
         //}
 
-            ///<summary>
-            ///
-            /// using updateModel Method
-            /// </summary>
-            /// 
-        [HttpPost]
-        [ActionName ("Create")]
-        public ActionResult Create_Post()
-        {
-            if (ModelState.IsValid)
-            {
-                Employee employee = new Employee();
-                UpdateModel(employee);
-                EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
-                empBusinessLayer.AddEmployee(employee);
-
-                return RedirectToAction("Index");
-            }
-
-            return View();
-        }
-
 
         [HttpGet]
 
         public ActionResult Edit(int id)
         {
             EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
-            Employee employee = empBusinessLayer.Employees.Single(emp=>emp.EmployeeId==id);
+            Employee employee = empBusinessLayer.Employees.Single(emp => emp.EmployeeId == id);
             return View(employee);
         }
 
-        [HttpPost]
+        //[HttpPost]
 
-        public ActionResult Edit()
+        //public ActionResult Edit()                                  //allow progs like fiddler to change the data in the 
+        //                                                             //DB by sending it in the post url, So it is not secure         
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        Employee employee = new Employee();
+        //        UpdateModel(employee);
+        //        EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
+        //        empBusinessLayer.SaveEmployee(employee);
+
+        //        return RedirectToAction("Index", new { @DepartmentId = 0 });
+        //    }
+
+        //    return View();
+        //}
+
+        [HttpPost]
+        [ActionName("Edit")]
+     
+        //public ActionResult Edit_post(int id)                                  //Prevent progs like fiddler to change the data in the 
+        //                                                                       //DB by sending it in the post url, So it is not secure         
+        //{
+        //    EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
+        //    Employee employee = empBusinessLayer.Employees.Single(x => x.EmployeeId == id);
+        //    UpdateModel(employee, new string[] { "EmployeeId", "Gender", "City", "DepartmentId" });// the string contains only the Attributes i allow to be changed ,
+
+        //    //called black list and white list / Include Property or Exclude Property
+        //    //OR 
+        //    //  UpdateModel(employee,null,null, new string[] { "Name" }); //using the overloaded version of updateModel with the excluding property
+
+        //    if (ModelState.IsValid)
+        //    {
+
+        //        empBusinessLayer.SaveEmployee(employee);
+
+        //        return RedirectToAction("Index", new { @DepartmentId = 0 });
+        //    }
+
+        //    return View(employee);
+        //}
+        
+            //Include and exclude properities from model binding using bind atttribute
+        public ActionResult Edit_post([Bind(Include = "EmployeeId, Gender, City, DepartmentId")]Employee employee)                            
         {
+            //OR :
+            //   public ActionResult Edit_post([Bind(Exclude = "Name")]Employee employee) {
+
+                EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
+          employee.Name = empBusinessLayer.Employees.Single(x => x.EmployeeId == employee.EmployeeId).Name; //we need to reomve the required attribute above Name field in Employee.Cs
+ 
             if (ModelState.IsValid)
             {
-                Employee employee = new Employee();
-                UpdateModel(employee);
-                EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
+
                 empBusinessLayer.SaveEmployee(employee);
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { @DepartmentId = 0 });
             }
 
-            return View();
+            return View(employee);
         }
-
 
         [HttpGet]
 
@@ -137,7 +193,13 @@ namespace MVCDemo.Controllers
             return View(employee);
         }
 
+        public ActionResult Delete(int id)
+        {
+            EmployeeBusinessLayer empBusinessLayer = new EmployeeBusinessLayer();
+            empBusinessLayer.DeleteEmployee(id);
 
+            return RedirectToAction("Index", new { @DepartmentId = 0 });
+        }
 
 
 
